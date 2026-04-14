@@ -13,11 +13,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    public static final String[] PUBLIC_ENDPOINTS = {
-            "/api/v1/auth/**",
-            "/actuator/**",
-    };
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -26,7 +21,6 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(PUBLIC_ENDPOINTS).permitAll()
                         // JWT has been validated at Gateway
                         // Service receives the X-User-Id header.
                         .anyRequest().permitAll()

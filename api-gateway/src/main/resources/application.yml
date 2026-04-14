@@ -5,103 +5,106 @@ spring:
   application:
     name: api-gateway
 
-  # ???????????????????????????????????????
+  # ═══════════════════════════════════════
   # Redis Configuration
-  # ???????????????????????????????????????
+  # ═══════════════════════════════════════
   data:
     redis:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
       password: ${REDIS_PASSWORD:}
       timeout: 2000ms
-  # ???????????????????????????????????????
+
+  # ═══════════════════════════════════════
   # Cloud Gateway Routes
-  # ???????????????????????????????????????
+  # ═══════════════════════════════════════
   cloud:
     gateway:
+      # Cấu hình CORS toàn cục
       globalcors:
-        routes:
-          # ?? User Service ??
-          - id: user-service
-            uri: http://${USER_SERVICE_HOST:localhost}:8081
-            predicates:
-              - Path=/api/auth/**, /api/users/**
-            filters:
-              - name: CircuitBreaker
-                args:
-                  name: userServiceCB
-                  fallbackUri: forward:/fallback/user
-          # ?? Video Catalog Service ??
-          - id: video-catalog-service
-            uri: http://${VIDEO_SERVICE_HOST:localhost}:8082
-            predicates:
-              - Path=/api/videos/**
-            filters:
-              - name: CircuitBreaker
-                args:
-                  name: videoServiceCB
-                  fallbackUri: forward:/fallback/video
+        cors-configurations:
+          '[/**]':
+            allowedOrigins:
+              - "http://localhost:3000"
+              - "http://localhost:5173"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - PATCH
+              - OPTIONS
+            allowedHeaders: "*"
+            allowCredentials: true
+            maxAge: 3600
 
-          # ?? Interaction Service ??
-          - id: interaction-service
-            uri: http://${INTERACTION_SERVICE_HOST:localhost}:8084
-            predicates:
-              - Path=/api/interactions/**
-            filters:
-              - name: CircuitBreaker
-                args:
-                  name: interactionServiceCB
-                  fallbackUri: forward:/fallback/interaction
+      # Định nghĩa các route
+      routes:
+        # ── User Service ──
+        - id: user-service
+          uri: http://${USER_SERVICE_HOST:localhost}:8081
+          predicates:
+            - Path=/api/auth/**, /api/users/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: userServiceCB
+                fallbackUri: forward:/fallback/user
 
-          # ?? Recommendation Service (Python) ??
-          - id: recommendation-service
-            uri: http://${RECOMMENDATION_SERVICE_HOST:localhost}:8085
-            predicates:
-              - Path=/api/recommendations/**
-            filters:
-              - name: CircuitBreaker
-                args:
-                  name: recommendationServiceCB
-                  fallbackUri: forward:/fallback/recommendation
+        # ── Video Catalog Service ──
+        - id: video-catalog-service
+          uri: http://${VIDEO_SERVICE_HOST:localhost}:8082
+          predicates:
+            - Path=/api/videos/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: videoServiceCB
+                fallbackUri: forward:/fallback/video
 
-        # Default filters �p d?ng cho t?t c? routes
-        default-filters:
-          - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
-      server:
-        webflux:
-          globalcors:
-            cors-configurations:
-              '[/**]':
-                allowed-origins:
-                  - "http://localhost:3000"
-                  - "http://localhost:5173"
-                allowed-methods:
-                  - GET
-                  - POST
-                  - PUT
-                  - DELETE
-                  - PATCH
-                  - OPTIONS
-                allowed-headers: "*"
-                allow-credentials: true
-                max-age: 3600
+        # ── Interaction Service ──
+        - id: interaction-service
+          uri: http://${INTERACTION_SERVICE_HOST:localhost}:8084
+          predicates:
+            - Path=/api/interactions/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: interactionServiceCB
+                fallbackUri: forward:/fallback/interaction
 
-# ???????????????????????????????????????
+        # ── Recommendation Service (Python) ──
+        - id: recommendation-service
+          uri: http://${RECOMMENDATION_SERVICE_HOST:localhost}:8085
+          predicates:
+            - Path=/api/recommendations/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: recommendationServiceCB
+                fallbackUri: forward:/fallback/recommendation
+
+      # Default filters for all routes
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+
+# ═══════════════════════════════════════
 # JWT Configuration
-# ???????????????????????????????????????
+# ═══════════════════════════════════════
 jwt:
   secret: ${JWT_SECRET:mySecretKeyForJWTTokenGenerationAndValidation2024StreamingVideo}
   expiration: 86400000  # 24h
-# ???????????????????????????????????????
+
+# ═══════════════════════════════════════
 # Rate Limiting Configuration
-# ???????????????????????????????????????
+# ═══════════════════════════════════════
 rate-limit:
   requests-per-second: 10
   burst-capacity: 20
 
-# ???????????????????????????????????????
+# ═══════════════════════════════════════
 # Logging
-# ???????????????????????????????????????
+# ═══════════════════════════════════════
 logging:
   level:
     org.springframework.cloud.gateway: DEBUG

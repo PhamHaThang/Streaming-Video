@@ -19,10 +19,14 @@
 		<spring-cloud.version>2025.0.2</spring-cloud.version>
 	</properties>
 	<dependencies>
+	    <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-circuitbreaker-reactor-resilience4j</artifactId>
+        </dependency>
 		<!-- Spring Cloud Gateway (Reactive) -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-gateway-server-webflux</artifactId>
+			<artifactId>spring-cloud-starter-gateway</artifactId>
 		</dependency>
 
 		<!-- Redis for Rate Limiting -->
