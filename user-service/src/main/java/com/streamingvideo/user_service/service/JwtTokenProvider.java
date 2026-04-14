@@ -2,6 +2,8 @@ package com.streamingvideo.user_service.service;
 
 import com.streamingvideo.user_service.entity.User;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -29,10 +31,10 @@ public class JwtTokenProvider {
     private final long refreshTokenExpiration;
 
     public JwtTokenProvider(
-            @Value("${jwt.secret}") SecretKey secretKey,
+            @Value("${jwt.secret}") String secretKey,
             @Value("${jwt.access-token-expiration:86400000}") long accessTokenExpiration,
             @Value("${jwt.refresh-token-expiration:604800000}") long refreshTokenExpiration) {
-        this.secretKey = secretKey;
+        this.secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey));
         this.accessTokenExpiration = accessTokenExpiration;
         this.refreshTokenExpiration = refreshTokenExpiration;
     }
