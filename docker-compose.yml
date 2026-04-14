@@ -1,0 +1,309 @@
+# ═══════════════════════════════════════
+# Docker Compose - Video Streaming Platform
+# ═══════════════════════════════════════
+
+services:
+
+  # ─────────────────────────────────────
+  # INFRASTRUCTURE LAYER
+  # ─────────────────────────────────────
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:14-alpine
+    container_name: streaming-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_MULTIPLE_DATABASES: user_db,video_db,interaction_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./scripts/init-multiple-dbs.sh:/docker-entrypoint-initdb.d/init-multiple-dbs.sh
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - streaming-network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: streaming-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - streaming-network
+
+  # Zookeeper (required by Kafka)
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.6.0
+    container_name: streaming-zookeeper
+    restart: unless-stopped
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    volumes:
+      - zookeeper-data:/var/lib/zookeeper/data
+    networks:
+      - streaming-network
+
+  # Apache Kafka
+  kafka:
+    image: confluentinc/cp-kafka:7.6.0
+    container_name: streaming-kafka
+    restart: unless-stopped
+    depends_on:
+      zookeeper:
+        condition: service_started
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    volumes:
+      - kafka-data:/var/lib/kafka/data
+    healthcheck:
+      test: ["CMD", "kafka-topics", "--bootstrap-server", "kafka:9092", "--list"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - streaming-network
+
+  # MinIO Object Storage
+  minio:
+    image: minio/minio:latest
+    container_name: streaming-minio
+    restart: unless-stopped
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "9000:9000"    # API
+      - "9001:9001"    # Web Console
+    volumes:
+      - minio-data:/data
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - streaming-network
+
+  # # ─────────────────────────────────────
+  # # APPLICATION LAYER
+  # # ─────────────────────────────────────
+
+  # # API Gateway
+  # api-gateway:
+  #   build:
+  #     context: ./api-gateway
+  #     dockerfile: Dockerfile
+  #   container_name: streaming-api-gateway
+  #   restart: unless-stopped
+  #   depends_on:
+  #     redis:
+  #       condition: service_healthy
+  #   environment:
+  #     REDIS_HOST: redis
+  #     REDIS_PORT: 6379
+  #     USER_SERVICE_HOST: user-service
+  #     VIDEO_SERVICE_HOST: video-catalog-service
+  #     INTERACTION_SERVICE_HOST: interaction-service
+  #     RECOMMENDATION_SERVICE_HOST: recommendation-service
+  #     JWT_SECRET: ${JWT_SECRET:-bXlTZWNyZXRLZXlGb3JKV1RUb2tlbkdlbmVyYXRpb25BbmRWYWxpZGF0aW9uMjAyNFN0cmVhbWluZ1ZpZGVv}
+  #   ports:
+  #     - "8080:8080"
+  #   networks:
+  #     - streaming-network
+
+  # # User Service
+  # user-service:
+  #   build:
+  #     context: ./user-service
+  #     dockerfile: Dockerfile
+  #   container_name: streaming-user-service
+  #   restart: unless-stopped
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #   environment:
+  #     DB_HOST: postgres
+  #     DB_PORT: 5432
+  #     DB_USERNAME: postgres
+  #     DB_PASSWORD: postgres
+  #     JWT_SECRET: ${JWT_SECRET:-bXlTZWNyZXRLZXlGb3JKV1RUb2tlbkdlbmVyYXRpb25BbmRWYWxpZGF0aW9uMjAyNFN0cmVhbWluZ1ZpZGVv}
+  #   ports:
+  #     - "8081:8081"
+  #   networks:
+  #     - streaming-network
+
+  # # Video Catalog Service
+  # video-catalog-service:
+  #   build:
+  #     context: ./video-catalog-service
+  #     dockerfile: Dockerfile
+  #   container_name: streaming-video-catalog
+  #   restart: unless-stopped
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #     kafka:
+  #       condition: service_healthy
+  #     minio:
+  #       condition: service_healthy
+  #   environment:
+  #     DB_HOST: postgres
+  #     DB_PORT: 5432
+  #     DB_USERNAME: postgres
+  #     DB_PASSWORD: postgres
+  #     KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+  #     MINIO_ENDPOINT: http://minio:9000
+  #     MINIO_ACCESS_KEY: minioadmin
+  #     MINIO_SECRET_KEY: minioadmin
+  #   ports:
+  #     - "8082:8082"
+  #   networks:
+  #     - streaming-network
+
+  # # Transcoding Service
+  # transcoding-service:
+  #   build:
+  #     context: ./transcoding-service
+  #     dockerfile: Dockerfile
+  #   container_name: streaming-transcoding
+  #   restart: unless-stopped
+  #   depends_on:
+  #     kafka:
+  #       condition: service_healthy
+  #     minio:
+  #       condition: service_healthy
+  #   environment:
+  #     KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+  #     MINIO_ENDPOINT: http://minio:9000
+  #     MINIO_ACCESS_KEY: minioadmin
+  #     MINIO_SECRET_KEY: minioadmin
+  #     TRANSCODE_TEMP_DIR: /app/temp/transcode
+  #   ports:
+  #     - "8083:8083"
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: '4.0'
+  #         memory: 4G
+  #       reservations:
+  #         cpus: '2.0'
+  #         memory: 2G
+  #   networks:
+  #     - streaming-network
+
+  # # Interaction Service
+  # interaction-service:
+  #   build:
+  #     context: ./interaction-service
+  #     dockerfile: Dockerfile
+  #   container_name: streaming-interaction
+  #   restart: unless-stopped
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #     redis:
+  #       condition: service_healthy
+  #     kafka:
+  #       condition: service_healthy
+  #   environment:
+  #     DB_HOST: postgres
+  #     DB_PORT: 5432
+  #     DB_USERNAME: postgres
+  #     DB_PASSWORD: postgres
+  #     REDIS_HOST: redis
+  #     REDIS_PORT: 6379
+  #     KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+  #   ports:
+  #     - "8084:8084"
+  #   networks:
+  #     - streaming-network
+
+  # # Recommendation Service (Python)
+  # recommendation-service:
+  #   build:
+  #     context: ./recommendation-service
+  #     dockerfile: Dockerfile
+  #   container_name: streaming-recommendation
+  #   restart: unless-stopped
+  #   depends_on:
+  #     redis:
+  #       condition: service_healthy
+  #     kafka:
+  #       condition: service_healthy
+  #   environment:
+  #     KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+  #     REDIS_HOST: redis
+  #     REDIS_PORT: 6379
+  #     VIDEO_SERVICE_URL: http://video-catalog-service:8082
+  #   ports:
+  #     - "8085:8085"
+  #   networks:
+  #     - streaming-network
+
+  # # Frontend
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #   container_name: streaming-frontend
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - api-gateway
+  #   ports:
+  #     - "3000:3000"
+  #   networks:
+  #     - streaming-network
+
+# ─────────────────────────────────────
+# VOLUMES
+# ─────────────────────────────────────
+volumes:
+  postgres-data:
+    driver: local
+  redis-data:
+    driver: local
+  zookeeper-data:
+    driver: local
+  kafka-data:
+    driver: local
+  minio-data:
+    driver: local
+
+# ─────────────────────────────────────
+# NETWORKS
+# ─────────────────────────────────────
+networks:
+  streaming-network:
+    driver: bridge
