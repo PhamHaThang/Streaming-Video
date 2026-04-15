@@ -75,6 +75,8 @@ public enum ErrorCode {
     INVALID_FILE_TYPE(4008, "Định dạng file không được hỗ trợ", HttpStatus.BAD_REQUEST),
     MINIO_INIT_ERROR(5002, "MinIO khởi tạo lỗi", HttpStatus.INTERNAL_SERVER_ERROR),
     MINIO_OPERATION_ERROR(5003, "Lỗi thao tác MinIO", HttpStatus.INTERNAL_SERVER_ERROR),
+    MINIO_UPLOAD_ERROR(5004, "Lỗi khi tải file lên MinIO", HttpStatus.INTERNAL_SERVER_ERROR),
+    MINIO_GENERATE_URL_ERROR(5005, "Lỗi khi tạo URL truy cập file trên MinIO", HttpStatus.INTERNAL_SERVER_ERROR),
 
     // ═══════════════════════════════════════
     // TRANSCODING SERVICE
@@ -87,7 +89,8 @@ public enum ErrorCode {
     // KAFKA / MESSAGING
     // ═══════════════════════════════════════
     KAFKA_PUBLISH_ERROR(5010, "Lỗi khi gửi message tới Kafka", HttpStatus.INTERNAL_SERVER_ERROR),
-    KAFKA_CONSUME_ERROR(5011, "Lỗi khi đọc message từ Kafka", HttpStatus.INTERNAL_SERVER_ERROR);
+    KAFKA_CONSUME_ERROR(5011, "Lỗi khi đọc message từ Kafka", HttpStatus.INTERNAL_SERVER_ERROR),
+    SERIALIZATION_ERROR(5012, "Lỗi khi serialize/deserialize message", HttpStatus.INTERNAL_SERVER_ERROR);
 
     private final int code;
     private final String message;

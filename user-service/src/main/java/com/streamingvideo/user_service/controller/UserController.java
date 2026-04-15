@@ -1,5 +1,6 @@
 package com.streamingvideo.user_service.controller;
 
+import com.streamingvideo.common.constant.AppHeaders;
 import com.streamingvideo.common.dto.response.ApiResponse;
 import com.streamingvideo.user_service.dto.request.ChangePasswordRequest;
 import com.streamingvideo.user_service.dto.request.UpdateProfileRequest;
@@ -21,16 +22,15 @@ public class UserController {
     /**
      * [GET] /api/users/me
      * Get info of current user
-     * userId is injected into the X-User-Id header by the gateway after JWT authentication.
+     * userId is injected into the X-User-Id header by the gateway after JWT
+     * authentication.
      */
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<UserResponse>> getCurrentUser(
-            @RequestHeader("X-User-Id") String userId
-    ) {
+            @RequestHeader(AppHeaders.X_USER_ID) String userId) {
         UserResponse userResponse = userService.getUserById(UUID.fromString(userId));
         return ResponseEntity.ok(
-                ApiResponse.success("Lấy profile user thành công", userResponse)
-        );
+                ApiResponse.success("Lấy profile user thành công", userResponse));
     }
 
     /**
@@ -38,12 +38,10 @@ public class UserController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<UserResponse>> getUserById(
-            @PathVariable UUID id
-    ) {
+            @PathVariable UUID id) {
         UserResponse userResponse = userService.getUserById(id);
         return ResponseEntity.ok(
-                ApiResponse.success("Lấy user với id: " + id + "  thành công", userResponse)
-        );
+                ApiResponse.success("Lấy user với id: " + id + "  thành công", userResponse));
     }
 
     /**
@@ -51,13 +49,11 @@ public class UserController {
      */
     @PutMapping("/me")
     public ResponseEntity<ApiResponse<UserResponse>> updateProfile(
-            @RequestHeader("X-User-Id") String userId,
-            @Valid @RequestBody UpdateProfileRequest request
-    ) {
+            @RequestHeader(AppHeaders.X_USER_ID) String userId,
+            @Valid @RequestBody UpdateProfileRequest request) {
         UserResponse userResponse = userService.updateProfile(UUID.fromString(userId), request);
         return ResponseEntity.ok(
-                ApiResponse.success("Cập nhật Profile thành công", userResponse)
-        );
+                ApiResponse.success("Cập nhật Profile thành công", userResponse));
     }
 
     /**
@@ -65,13 +61,10 @@ public class UserController {
      */
     @PutMapping("/me/password")
     public ResponseEntity<ApiResponse<UserResponse>> changePassword(
-            @RequestHeader("X-User-Id") String userId,
-            @Valid @RequestBody ChangePasswordRequest request
-    ) {
+            @RequestHeader(AppHeaders.X_USER_ID) String userId,
+            @Valid @RequestBody ChangePasswordRequest request) {
         userService.changePassword(UUID.fromString(userId), request);
         return ResponseEntity.ok(
-                ApiResponse.success("Đổi mật khẩu thành công", null)
-        );
+                ApiResponse.success("Đổi mật khẩu thành công", null));
     }
 }
-

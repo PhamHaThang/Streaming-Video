@@ -1,4 +1,4 @@
-package com.streamingvideo.user_service.security;
+package com.streamingvideo.user_service.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

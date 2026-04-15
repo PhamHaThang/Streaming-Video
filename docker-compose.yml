@@ -170,39 +170,39 @@ services:
         networks:
             - streaming-network
 
-    # # Video Catalog Service
-    # video-catalog-service:
-    #     build:
-    #         context: .
-    #         dockerfile: Dockerfile
-    #     container_name: streaming-video-catalog
-    #     restart: unless-stopped
-    #     depends_on:
-    #         postgres:
-    #             condition: service_healthy
-    #         kafka:
-    #             condition: service_healthy
-    #         minio:
-    #             condition: service_healthy
-    #     environment:
-    #         DB_HOST: postgres
-    #         DB_PORT: 5432
-    #         DB_USERNAME: postgres
-    #         DB_PASSWORD: postgres
-    #         KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-    #         MINIO_ENDPOINT: http://minio:9000
-    #         MINIO_ACCESS_KEY: minioadmin
-    #         MINIO_SECRET_KEY: minioadmin
-    #     ports:
-    #         - "8082:8082"
-    #     networks:
-    #         - streaming-network
+    # Video Catalog Service
+    video-catalog-service:
+        build:
+            context: .
+            dockerfile: ./video-catalog-service/Dockerfile
+        container_name: streaming-video-catalog
+        restart: unless-stopped
+        depends_on:
+            postgres:
+                condition: service_healthy
+            kafka:
+                condition: service_healthy
+            minio:
+                condition: service_healthy
+        environment:
+            DB_HOST: postgres
+            DB_PORT: 5432
+            DB_USERNAME: postgres
+            DB_PASSWORD: postgres
+            KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+            MINIO_ENDPOINT: http://minio:9000
+            MINIO_ACCESS_KEY: minioadmin
+            MINIO_SECRET_KEY: minioadmin
+        ports:
+            - "8082:8082"
+        networks:
+            - streaming-network
 
     # # Transcoding Service
     # transcoding-service:
     #     build:
     #         context: .
-    #         dockerfile: Dockerfile
+    #         dockerfile: ./transcoding-service/Dockerfile
     #     container_name: streaming-transcoding
     #     restart: unless-stopped
     #     depends_on:
@@ -233,7 +233,7 @@ services:
     # interaction-service:
     #     build:
     #         context: .
-    #         dockerfile: Dockerfile
+    #         dockerfile: ./interaction-service/Dockerfile
     #     container_name: streaming-interaction
     #     restart: unless-stopped
     #     depends_on:
@@ -260,7 +260,7 @@ services:
     # recommendation-service:
     #     build:
     #         context: .
-    #         dockerfile: Dockerfile
+    #         dockerfile: ./recommendation-service/Dockerfile
     #     container_name: streaming-recommendation
     #     restart: unless-stopped
     #     depends_on:
