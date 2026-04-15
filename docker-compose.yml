@@ -122,15 +122,15 @@ services:
         networks:
             - streaming-network
 
-    # # ─────────────────────────────────────
-    # # APPLICATION LAYER
-    # # ─────────────────────────────────────
+    # ─────────────────────────────────────
+    # APPLICATION LAYER
+    # ─────────────────────────────────────
 
-    # # API Gateway
+    # API Gateway
     api-gateway:
         build:
-            context: ./api-gateway
-            dockerfile: Dockerfile
+            context: .
+            dockerfile: ./api-gateway/Dockerfile
         container_name: streaming-api-gateway
         restart: unless-stopped
         depends_on:
@@ -149,11 +149,11 @@ services:
         networks:
             - streaming-network
 
-    # # User Service
+    # User Service
     user-service:
         build:
-            context: ./user-service
-            dockerfile: Dockerfile
+            context: .
+            dockerfile: ./user-service/Dockerfile
         container_name: streaming-user-service
         restart: unless-stopped
         depends_on:
@@ -171,126 +171,126 @@ services:
             - streaming-network
 
     # # Video Catalog Service
-    video-catalog-service:
-        build:
-            context: ./video-catalog-service
-            dockerfile: Dockerfile
-        container_name: streaming-video-catalog
-        restart: unless-stopped
-        depends_on:
-            postgres:
-                condition: service_healthy
-            kafka:
-                condition: service_healthy
-            minio:
-                condition: service_healthy
-        environment:
-            DB_HOST: postgres
-            DB_PORT: 5432
-            DB_USERNAME: postgres
-            DB_PASSWORD: postgres
-            KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-            MINIO_ENDPOINT: http://minio:9000
-            MINIO_ACCESS_KEY: minioadmin
-            MINIO_SECRET_KEY: minioadmin
-        ports:
-            - "8082:8082"
-        networks:
-            - streaming-network
+    # video-catalog-service:
+    #     build:
+    #         context: .
+    #         dockerfile: Dockerfile
+    #     container_name: streaming-video-catalog
+    #     restart: unless-stopped
+    #     depends_on:
+    #         postgres:
+    #             condition: service_healthy
+    #         kafka:
+    #             condition: service_healthy
+    #         minio:
+    #             condition: service_healthy
+    #     environment:
+    #         DB_HOST: postgres
+    #         DB_PORT: 5432
+    #         DB_USERNAME: postgres
+    #         DB_PASSWORD: postgres
+    #         KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    #         MINIO_ENDPOINT: http://minio:9000
+    #         MINIO_ACCESS_KEY: minioadmin
+    #         MINIO_SECRET_KEY: minioadmin
+    #     ports:
+    #         - "8082:8082"
+    #     networks:
+    #         - streaming-network
 
     # # Transcoding Service
-    transcoding-service:
-        build:
-            context: ./transcoding-service
-            dockerfile: Dockerfile
-        container_name: streaming-transcoding
-        restart: unless-stopped
-        depends_on:
-            kafka:
-                condition: service_healthy
-            minio:
-                condition: service_healthy
-        environment:
-            KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-            MINIO_ENDPOINT: http://minio:9000
-            MINIO_ACCESS_KEY: minioadmin
-            MINIO_SECRET_KEY: minioadmin
-            TRANSCODE_TEMP_DIR: /app/temp/transcode
-        ports:
-            - "8083:8083"
-        deploy:
-            resources:
-                limits:
-                    cpus: "4.0"
-                    memory: 4G
-                reservations:
-                    cpus: "2.0"
-                    memory: 2G
-        networks:
-            - streaming-network
+    # transcoding-service:
+    #     build:
+    #         context: .
+    #         dockerfile: Dockerfile
+    #     container_name: streaming-transcoding
+    #     restart: unless-stopped
+    #     depends_on:
+    #         kafka:
+    #             condition: service_healthy
+    #         minio:
+    #             condition: service_healthy
+    #     environment:
+    #         KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    #         MINIO_ENDPOINT: http://minio:9000
+    #         MINIO_ACCESS_KEY: minioadmin
+    #         MINIO_SECRET_KEY: minioadmin
+    #         TRANSCODE_TEMP_DIR: /app/temp/transcode
+    #     ports:
+    #         - "8083:8083"
+    #     deploy:
+    #         resources:
+    #             limits:
+    #                 cpus: "4.0"
+    #                 memory: 4G
+    #             reservations:
+    #                 cpus: "2.0"
+    #                 memory: 2G
+    #     networks:
+    #         - streaming-network
 
     # # Interaction Service
-    interaction-service:
-        build:
-            context: ./interaction-service
-            dockerfile: Dockerfile
-        container_name: streaming-interaction
-        restart: unless-stopped
-        depends_on:
-            postgres:
-                condition: service_healthy
-            redis:
-                condition: service_healthy
-            kafka:
-                condition: service_healthy
-        environment:
-            DB_HOST: postgres
-            DB_PORT: 5432
-            DB_USERNAME: postgres
-            DB_PASSWORD: postgres
-            REDIS_HOST: redis
-            REDIS_PORT: 6379
-            KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-        ports:
-            - "8084:8084"
-        networks:
-            - streaming-network
+    # interaction-service:
+    #     build:
+    #         context: .
+    #         dockerfile: Dockerfile
+    #     container_name: streaming-interaction
+    #     restart: unless-stopped
+    #     depends_on:
+    #         postgres:
+    #             condition: service_healthy
+    #         redis:
+    #             condition: service_healthy
+    #         kafka:
+    #             condition: service_healthy
+    #     environment:
+    #         DB_HOST: postgres
+    #         DB_PORT: 5432
+    #         DB_USERNAME: postgres
+    #         DB_PASSWORD: postgres
+    #         REDIS_HOST: redis
+    #         REDIS_PORT: 6379
+    #         KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    #     ports:
+    #         - "8084:8084"
+    #     networks:
+    #         - streaming-network
 
     # # Recommendation Service (Python)
-    recommendation-service:
-        build:
-            context: ./recommendation-service
-            dockerfile: Dockerfile
-        container_name: streaming-recommendation
-        restart: unless-stopped
-        depends_on:
-            redis:
-                condition: service_healthy
-            kafka:
-                condition: service_healthy
-        environment:
-            KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-            REDIS_HOST: redis
-            REDIS_PORT: 6379
-            VIDEO_SERVICE_URL: http://video-catalog-service:8082
-        ports:
-            - "8085:8085"
-        networks:
-            - streaming-network
+    # recommendation-service:
+    #     build:
+    #         context: .
+    #         dockerfile: Dockerfile
+    #     container_name: streaming-recommendation
+    #     restart: unless-stopped
+    #     depends_on:
+    #         redis:
+    #             condition: service_healthy
+    #         kafka:
+    #             condition: service_healthy
+    #     environment:
+    #         KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    #         REDIS_HOST: redis
+    #         REDIS_PORT: 6379
+    #         VIDEO_SERVICE_URL: http://video-catalog-service:8082
+    #     ports:
+    #         - "8085:8085"
+    #     networks:
+    #         - streaming-network
 
     # # Frontend
-    frontend:
-        build:
-            context: ./frontend
-            dockerfile: Dockerfile
-        container_name: streaming-frontend
-        restart: unless-stopped
-        depends_on:
-            - api-gateway
-        ports:
-            - "3000:3000"
-        networks:
-            - streaming-network
+    # frontend:
+    #     build:
+    #         context: ./frontend
+    #         dockerfile: Dockerfile
+    #     container_name: streaming-frontend
+    #     restart: unless-stopped
+    #     depends_on:
+    #         - api-gateway
+    #     ports:
+    #         - "3000:3000"
+    #     networks:
+    #         - streaming-network
 
 # ─────────────────────────────────────
 # VOLUMES

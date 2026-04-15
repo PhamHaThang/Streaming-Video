@@ -17,6 +17,13 @@
 	</properties>
 
 	<dependencies>
+		<!-- Shared common library -->
+		<dependency>
+			<groupId>com.streamingvideo</groupId>
+			<artifactId>common-lib</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
 		<!-- Spring Web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

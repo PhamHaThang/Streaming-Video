@@ -1,7 +1,7 @@
 package com.streamingvideo.user_service.service.impl;
 
-import com.streamingvideo.user_service.common.error.AppException;
-import com.streamingvideo.user_service.common.error.ErrorCode;
+import com.streamingvideo.common.exception.AppException;
+import com.streamingvideo.common.exception.ErrorCode;
 import com.streamingvideo.user_service.dto.request.ChangePasswordRequest;
 import com.streamingvideo.user_service.dto.request.UpdateProfileRequest;
 import com.streamingvideo.user_service.dto.response.UserResponse;

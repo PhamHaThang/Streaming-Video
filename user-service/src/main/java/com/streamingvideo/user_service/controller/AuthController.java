@@ -1,6 +1,6 @@
 package com.streamingvideo.user_service.controller;
 
-import com.streamingvideo.user_service.common.ApiResponse;
+import com.streamingvideo.common.dto.response.ApiResponse;
 import com.streamingvideo.user_service.dto.request.LoginRequest;
 import com.streamingvideo.user_service.dto.request.RefreshTokenRequest;
 import com.streamingvideo.user_service.dto.request.RegisterRequest;

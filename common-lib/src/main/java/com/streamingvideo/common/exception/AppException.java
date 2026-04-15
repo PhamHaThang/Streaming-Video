@@ -1,4 +1,4 @@
-package com.streamingvideo.user_service.common.error;
+package com.streamingvideo.common.exception;
 
 import lombok.Getter;
 

@@ -1,6 +1,6 @@
 package com.streamingvideo.user_service.entity;
 
-import com.streamingvideo.user_service.common.BaseEntity;
+import com.streamingvideo.common.dto.BaseEntity;
 import com.streamingvideo.user_service.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;

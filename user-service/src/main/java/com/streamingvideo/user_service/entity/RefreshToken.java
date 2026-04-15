@@ -1,6 +1,6 @@
 package com.streamingvideo.user_service.entity;
 
-import com.streamingvideo.user_service.common.BaseEntity;
+import com.streamingvideo.common.dto.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,7 +18,7 @@ public class RefreshToken extends BaseEntity {
     private String token;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id",nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Column(name = "expiry_date", nullable = false)

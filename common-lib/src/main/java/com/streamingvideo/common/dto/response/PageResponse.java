@@ -1,4 +1,4 @@
-package com.streamingvideo.user_service.common;
+package com.streamingvideo.common.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

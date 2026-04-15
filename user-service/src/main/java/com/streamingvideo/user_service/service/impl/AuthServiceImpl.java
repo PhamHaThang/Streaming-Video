@@ -1,7 +1,7 @@
 package com.streamingvideo.user_service.service.impl;
 
-import com.streamingvideo.user_service.common.error.AppException;
-import com.streamingvideo.user_service.common.error.ErrorCode;
+import com.streamingvideo.common.exception.AppException;
+import com.streamingvideo.common.exception.ErrorCode;
 import com.streamingvideo.user_service.dto.request.LoginRequest;
 import com.streamingvideo.user_service.dto.request.RefreshTokenRequest;
 import com.streamingvideo.user_service.dto.request.RegisterRequest;
@@ -24,9 +24,9 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
-    private RefreshTokenService refreshTokenService;
-    private JwtTokenProvider jwtTokenProvider;
-    private PasswordEncoder passwordEncoder;
+    private final RefreshTokenService refreshTokenService;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final PasswordEncoder passwordEncoder;
 
     /**
      * Register new account

@@ -1,7 +1,7 @@
 package com.streamingvideo.user_service.service.impl;
 
-import com.streamingvideo.user_service.common.error.AppException;
-import com.streamingvideo.user_service.common.error.ErrorCode;
+import com.streamingvideo.common.exception.AppException;
+import com.streamingvideo.common.exception.ErrorCode;
 import com.streamingvideo.user_service.entity.RefreshToken;
 import com.streamingvideo.user_service.entity.User;
 import com.streamingvideo.user_service.repository.RefreshTokenRepository;

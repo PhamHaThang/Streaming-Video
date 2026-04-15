@@ -1,7 +1,7 @@
-package com.streamingvideo.user_service.common;
+package com.streamingvideo.common.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.streamingvideo.user_service.common.error.ErrorCode;
+import com.streamingvideo.common.exception.ErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
