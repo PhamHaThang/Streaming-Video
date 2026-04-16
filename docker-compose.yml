@@ -198,36 +198,36 @@ services:
         networks:
             - streaming-network
 
-    # # Transcoding Service
-    # transcoding-service:
-    #     build:
-    #         context: .
-    #         dockerfile: ./transcoding-service/Dockerfile
-    #     container_name: streaming-transcoding
-    #     restart: unless-stopped
-    #     depends_on:
-    #         kafka:
-    #             condition: service_healthy
-    #         minio:
-    #             condition: service_healthy
-    #     environment:
-    #         KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-    #         MINIO_ENDPOINT: http://minio:9000
-    #         MINIO_ACCESS_KEY: minioadmin
-    #         MINIO_SECRET_KEY: minioadmin
-    #         TRANSCODE_TEMP_DIR: /app/temp/transcode
-    #     ports:
-    #         - "8083:8083"
-    #     deploy:
-    #         resources:
-    #             limits:
-    #                 cpus: "4.0"
-    #                 memory: 4G
-    #             reservations:
-    #                 cpus: "2.0"
-    #                 memory: 2G
-    #     networks:
-    #         - streaming-network
+    # Transcoding Service
+    transcoding-service:
+        build:
+            context: .
+            dockerfile: ./transcoding-service/Dockerfile
+        container_name: streaming-transcoding
+        restart: unless-stopped
+        depends_on:
+            kafka:
+                condition: service_healthy
+            minio:
+                condition: service_healthy
+        environment:
+            KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+            MINIO_ENDPOINT: http://minio:9000
+            MINIO_ACCESS_KEY: minioadmin
+            MINIO_SECRET_KEY: minioadmin
+            TRANSCODE_TEMP_DIR: /app/temp/transcode
+        ports:
+            - "8083:8083"
+        deploy:
+            resources:
+                limits:
+                    cpus: "4.0"
+                    memory: 4G
+                reservations:
+                    cpus: "2.0"
+                    memory: 2G
+        networks:
+            - streaming-network
 
     # # Interaction Service
     # interaction-service:

@@ -1,0 +1,45 @@
+server:
+    port: 8083
+
+spring:
+    application:
+        name: transcoding-service
+
+    # =======================================
+    # Kafka
+    # =======================================
+    kafka:
+        bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+        consumer:
+            group-id: transcoding-group
+            auto-offset-reset: earliest
+            key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+            value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+            # Max 1 message/1 poll
+            max-poll-records: 1
+            properties:
+                max.poll.interval.ms: 3600000 # 1h
+        producer:
+            key-serializer: org.apache.kafka.common.serialization.StringSerializer
+            value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+# =======================================
+# MinIO
+# =======================================
+minio:
+    endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
+    access-key: ${MINIO_ACCESS_KEY:minioadmin}
+    secret-key: ${MINIO_SECRET_KEY:minioadmin}
+
+# =======================================
+# Transcoding Settings
+# =======================================
+transcoding:
+    ffmpeg-path: ${FFMPEG_PATH:ffmpeg} # Path to FFmpeg binary
+    temp-dir: ${TRANSCODE_TEMP_DIR:./temp/transcode}
+    segment-duration: 10 # HLS segment duration (second)
+    timeout-minutes: 60 # Timeout per FFmpeg command
+
+logging:
+    level:
+        com.streamingvideo.transcoding: DEBUG

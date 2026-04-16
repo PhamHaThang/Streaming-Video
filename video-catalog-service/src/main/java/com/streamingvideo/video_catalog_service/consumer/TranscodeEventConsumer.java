@@ -1,4 +1,4 @@
-package com.streamingvideo.video_catalog_service.kafka;
+package com.streamingvideo.video_catalog_service.consumer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.streamingvideo.common.constant.KafkaTopics;
