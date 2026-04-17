@@ -1,9 +1,12 @@
 package com.streamingvideo.interaction_service.enums;
 
+import lombok.Getter;
+
 /**
  * Enum for interaction
  * Each interaction has a weight used for recommendations.
  */
+@Getter
 public enum InteractionType {
     VIEW(1.0),
     LIKE(3.0),
@@ -19,7 +22,4 @@ public enum InteractionType {
         this.weight = weight;
     }
 
-    public double getWeight() {
-        return weight;
-    }
 }

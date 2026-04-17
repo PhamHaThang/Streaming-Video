@@ -229,32 +229,32 @@ services:
         networks:
             - streaming-network
 
-    # # Interaction Service
-    # interaction-service:
-    #     build:
-    #         context: .
-    #         dockerfile: ./interaction-service/Dockerfile
-    #     container_name: streaming-interaction
-    #     restart: unless-stopped
-    #     depends_on:
-    #         postgres:
-    #             condition: service_healthy
-    #         redis:
-    #             condition: service_healthy
-    #         kafka:
-    #             condition: service_healthy
-    #     environment:
-    #         DB_HOST: postgres
-    #         DB_PORT: 5432
-    #         DB_USERNAME: postgres
-    #         DB_PASSWORD: postgres
-    #         REDIS_HOST: redis
-    #         REDIS_PORT: 6379
-    #         KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-    #     ports:
-    #         - "8084:8084"
-    #     networks:
-    #         - streaming-network
+    # Interaction Service
+    interaction-service:
+        build:
+            context: .
+            dockerfile: ./interaction-service/Dockerfile
+        container_name: streaming-interaction
+        restart: unless-stopped
+        depends_on:
+            postgres:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
+            kafka:
+                condition: service_healthy
+        environment:
+            DB_HOST: postgres
+            DB_PORT: 5432
+            DB_USERNAME: postgres
+            DB_PASSWORD: postgres
+            REDIS_HOST: redis
+            REDIS_PORT: 6379
+            KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+        ports:
+            - "8084:8084"
+        networks:
+            - streaming-network
 
     # # Recommendation Service (Python)
     # recommendation-service:

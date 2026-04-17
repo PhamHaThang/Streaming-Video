@@ -31,5 +31,5 @@ public class Interaction extends BaseEntity {
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "metadata", columnDefinition = "jsonb")
-    private Map<String, Objects> metadata;
+    private Map<String, Object> metadata;
 }

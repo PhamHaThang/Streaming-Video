@@ -42,4 +42,4 @@ transcoding:
 
 logging:
     level:
-        com.streamingvideo.transcoding: DEBUG
+        com.streamingvideo.transcoding_service: DEBUG
