@@ -81,9 +81,9 @@ public enum ErrorCode {
     // ═══════════════════════════════════════
     // TRANSCODING SERVICE
     // ═══════════════════════════════════════
-    TRANSCODE_FAILED(5004, "Chuyển đổi video thất bại", HttpStatus.INTERNAL_SERVER_ERROR),
-    FFMPEG_ERROR(5005, "Lỗi FFmpeg khi xử lý video", HttpStatus.INTERNAL_SERVER_ERROR),
-    TRANSCODE_TIMEOUT(5006, "Chuyển đổi video vượt quá thời gian cho phép", HttpStatus.INTERNAL_SERVER_ERROR),
+    TRANSCODE_FAILED(5020, "Chuyển đổi video thất bại", HttpStatus.INTERNAL_SERVER_ERROR),
+    FFMPEG_ERROR(5021, "Lỗi FFmpeg khi xử lý video", HttpStatus.INTERNAL_SERVER_ERROR),
+    TRANSCODE_TIMEOUT(5022, "Chuyển đổi video vượt quá thời gian cho phép", HttpStatus.INTERNAL_SERVER_ERROR),
 
     // ═══════════════════════════════════════
     // KAFKA / MESSAGING

@@ -1,10 +1,12 @@
 package com.streamingvideo.transcoding_service.consumer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.streamingvideo.common.constant.KafkaTopics;
 import com.streamingvideo.common.dto.event.VideoUploadedEvent;
 import com.streamingvideo.transcoding_service.service.TranscodingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
 
@@ -25,6 +27,12 @@ import org.springframework.stereotype.Component;
 public class VideoUploadConsumer {
     private final TranscodingService transcodingService;
     private final ObjectMapper objectMapper;
+
+    @KafkaListener(
+            topics = KafkaTopics.VIDEO_UPLOADED,
+            groupId = "transcoding-group",
+            concurrency = "2"
+    )
     public void handleVideoUploaded(String message){
         try {
             VideoUploadedEvent event = objectMapper.readValue(

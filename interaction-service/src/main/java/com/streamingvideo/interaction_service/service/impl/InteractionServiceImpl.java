@@ -75,7 +75,7 @@ public class InteractionServiceImpl implements InteractionService {
                     .orElse(WatchHistory.builder()
                             .userId(userId)
                             .videoId(interactionRequest.getVideoId())
-                            .watchCount(0) 
+                            .watchCount(0)
                             .build());
 
             // Mỗi lần gửi sự kiện VIEW, ta cộng thêm 1 lần xem
@@ -137,7 +137,6 @@ public class InteractionServiceImpl implements InteractionService {
                 .orElse(WatchHistory.builder()
                         .videoId(request.getVideoId())
                         .userId(userId)
-                        .watchCount(0)
                         .build()
                 );
 

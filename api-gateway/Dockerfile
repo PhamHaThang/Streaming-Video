@@ -18,12 +18,14 @@ WORKDIR /app
 
 COPY --from=build /workspace/api-gateway/target/api-gateway-1.0.0.jar app.jar
 
+RUN apk add --no-cache curl
+
 # Expose port
 EXPOSE 8080
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:8080/actuator/health || exit 1
+  CMD curl -f http://localhost:8080/actuator/health || exit 1
 
 # Run
 ENTRYPOINT ["java", "-jar", "app.jar"]
