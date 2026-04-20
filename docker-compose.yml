@@ -256,27 +256,28 @@ services:
         networks:
             - streaming-network
 
-    # # Recommendation Service (Python)
-    # recommendation-service:
-    #     build:
-    #         context: .
-    #         dockerfile: ./recommendation-service/Dockerfile
-    #     container_name: streaming-recommendation
-    #     restart: unless-stopped
-    #     depends_on:
-    #         redis:
-    #             condition: service_healthy
-    #         kafka:
-    #             condition: service_healthy
-    #     environment:
-    #         KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-    #         REDIS_HOST: redis
-    #         REDIS_PORT: 6379
-    #         VIDEO_SERVICE_URL: http://video-catalog-service:8082
-    #     ports:
-    #         - "8085:8085"
-    #     networks:
-    #         - streaming-network
+    # Recommendation Service (Python)
+    recommendation-service:
+        build:
+            context: ./recommendation-service
+            dockerfile: Dockerfile
+        container_name: streaming-recommendation
+        restart: unless-stopped
+        depends_on:
+            redis:
+                condition: service_healthy
+            kafka:
+                condition: service_healthy
+        environment:
+            KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+            REDIS_HOST: redis
+            REDIS_PORT: 6379
+            VIDEO_SERVICE_URL: http://video-catalog-service:8082
+            DEBUG: "false"
+        ports:
+            - "8085:8085"
+        networks:
+            - streaming-network
 
     # # Frontend
     # frontend:

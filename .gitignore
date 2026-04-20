@@ -23,3 +23,11 @@ target/
 generated/
 
 **/.DS_Store
+
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
+.env
