@@ -1,32 +1,40 @@
 import { createContext, useReducer } from "react";
-import { authApi } from "../api/authApi";
 import toast from "react-hot-toast";
+import { authApi } from "../api";
 
 const AuthContext = createContext(null);
 
 // ── Initial State ──
 const initialState = {
     user: JSON.parse(localStorage.getItem("user")) || null,
-    loading: false,
+    isLoading: false,
     error: null,
+    isAuthenticated: false,
 };
 
 // ── Reducer ──
 const authReducer = (state, action) => {
     switch (action.type) {
         case "AUTH_START":
-            return { ...state, loading: true, error: null };
+            return { ...state, isLoading: true, error: null };
         case "AUTH_SUCCESS":
             return {
                 ...state,
-                loading: false,
+                isLoading: false,
                 user: action.payload,
                 error: null,
+                isAuthenticated: true,
             };
         case "AUTH_ERROR":
-            return { ...state, loading: false, error: action.payload };
+            return { ...state, isLoading: false, error: action.payload };
         case "LOGOUT":
-            return { ...state, user: null, loading: false, error: null };
+            return {
+                ...state,
+                user: null,
+                isLoading: false,
+                error: null,
+                isAuthenticated: false,
+            };
         default:
             return state;
     }
